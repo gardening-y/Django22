@@ -59,3 +59,4 @@ class TestView(TestCase):
         post_area = main_area.find('div', id='post-area')
         self.assertIn(post_001.title, post_area.text)
         self.assertIn(post_001.content, post_area.text)
+        
