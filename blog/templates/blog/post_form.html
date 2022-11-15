@@ -1,5 +1,5 @@
 {% extends 'blog/base.html' %}
-
+{% load crispy_forms_tags %}
 {% block head_title %}
     Create Post - Blog
 {% endblock %}
@@ -10,11 +10,12 @@
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <table>
-      {{form}} <!--fields 명을 따라서 생성됨-->
-      <tr>
-        <th><label for="id_tags">Tags:</label></th>
-        <td><input type="text" id="id_tags" name="tags_str"></td>
-      </tr>
+      {{form | crispy}} <!--fields 명을 따라서 생성됨-->
+      <div id="div_id_tags_str">
+        <label for="id_tags">Tags:</label>
+        <input type="text" id="id_tags" name="tags_str"
+        class="textinput textInput form-control">
+      </div>
     </table>
     <button type="submit" class="btn btn-primary float-right">Submit</button>
   </form>
