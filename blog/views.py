@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Post, Category, Tag
+from .models import Post, Category, Tag, Comment
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404
 class PostUpdate(LoginRequiredMixin, UpdateView):
     model = Post
     fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category']
-
+    # 템플릿 post_forms
     template_name = 'blog/post_update_form.html'
 
     def dispatch(self, request, *args, **kwargs):
@@ -51,7 +51,7 @@ class PostUpdate(LoginRequiredMixin, UpdateView):
 class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Post
     fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category']
-
+    #템플릿 post_forms
     def test_func(self):
         return self.request.user.is_superuser or self.request.user.is_staff
     def form_valid(self, form):
@@ -151,6 +151,20 @@ def new_comment(request, pk):
             return redirect(post.get_absolute_url())
     else:
         raise PermissionDenied
+
+class CommentUpdate(UpdateView):
+    model = Comment
+    form_class = CommentForm
+    # CreateView, UpdateView, form을 사용하면
+    # 템플릿 모델명_forms로 자동으로 만들어짐 : comment_forms
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user == self.get_object().author:
+            return super(CommentUpdate, self).dispatch(request, *args, **kwargs)
+        else:
+            return PermissionDenied
+
+
 
 # def index(request):
 #     posts1 = Post.objects.all().order_by('-pk')
